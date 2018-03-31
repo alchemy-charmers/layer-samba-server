@@ -30,17 +30,18 @@ class SambaHelper():
 
     def update_config(self):
         if self.charm_config['smb-shares']:
-            for share in self.charm_config['smb-shares'].split(','):
+            for entry in self.charm_config['smb-shares'].split(','):
+                share, path = entry.split(':')
                 self.smb_config[share] = {}
-                self.smb_config[share]['path'] = share
+                self.smb_config[share]['path'] = path
                 if self.charm_config['smb-browsable']:
                     self.smb_config[share]['browsable'] = 'yes'
                 else:
                     self.smb_config[share]['browsable'] = 'no'
                 if self.charm_config['smb-guest']:
-                    self.smb_config[share]['guest'] = 'ok'
+                    self.smb_config[share]['guest ok'] = 'yes'
                 else:
-                    self.smb_config[share]['guest'] = 'no'
+                    self.smb_config[share]['guest ok'] = 'no'
                 if self.charm_config['smb-read-only']:
                     self.smb_config[share]['read only'] = 'yes'
                 else:
@@ -56,7 +57,9 @@ class SambaHelper():
         for section in self.smb_config.keys():
             sections = ['global']
             if self.charm_config['smb-shares']:
-                sections.extend(self.charm_config['smb-shares'].split(','))
+                for entry in self.charm_config['smb-shares'].split(','):
+                    share, path = entry.split(':')
+                    sections.append(share)
             if self.charm_config['smb-custom']:
                 sections.extend(['custom-{}'.format(i) for i, dummy in enumerate(self.charm_config['smb-custom'].split(';'))])
             if section not in sections:

@@ -40,85 +40,84 @@ class TestLibsmb():
             assert "[global]" in cfg
 
         # Check with one share
-        smb.charm_config['smb-shares'] = '/mnt/unit-test'
+        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test'
         smb.update_config()
         smb.save_config()
         with open(smb.config_file, 'r') as config:
             cfg = config.read()
-            assert "[/mnt/unit-test]" in cfg
+            assert "[mock]" in cfg
             assert "browsable = yes\n" in cfg
-            assert "guest = ok\n" in cfg
+            assert "guest ok = yes\n" in cfg
             assert "read only = no\n" in cfg
             assert "create mask = 0777\n" in cfg
 
         # Check with multiple share
-        smb.charm_config['smb-shares'] = '/mnt/unit-test,/mnt/test-unit'
+        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
         smb.update_config()
         smb.save_config()
         with open(smb.config_file, 'r') as config:
             cfg = config.read()
-            assert "[/mnt/unit-test]" in cfg
-            assert "[/mnt/test-unit]" in cfg
+            assert "[mock]" in cfg
+            assert "[mock2]" in cfg
             assert "browsable = yes\n" in cfg
-            assert "guest = ok\n" in cfg
+            assert "guest ok = yes\n" in cfg
             assert "read only = no\n" in cfg
             assert "create mask = 0777\n" in cfg
 
         # Check browsable
-        smb.charm_config['smb-shares'] = '/mnt/unit-test,/mnt/test-unit'
+        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
         smb.charm_config['smb-browsable'] = False
         smb.update_config()
         smb.save_config()
         with open(smb.config_file, 'r') as config:
             cfg = config.read()
-            assert "[/mnt/unit-test]" in cfg
-            assert "[/mnt/test-unit]" in cfg
+            assert "[mock]" in cfg
+            assert "[mock2]" in cfg
             assert "browsable = yes\n" not in cfg
             assert "browsable = no\n" in cfg
-            assert "guest = ok\n" in cfg
+            assert "guest ok = yes\n" in cfg
             assert "read only = no\n" in cfg
             assert "create mask = 0777\n" in cfg
 
         # Check guest
-        smb.charm_config['smb-shares'] = '/mnt/unit-test,/mnt/test-unit'
+        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
         smb.charm_config['smb-guest'] = False
         smb.update_config()
         smb.save_config()
         with open(smb.config_file, 'r') as config:
             cfg = config.read()
-            assert "[/mnt/unit-test]" in cfg
-            assert "[/mnt/test-unit]" in cfg
+            assert "[mock]" in cfg
+            assert "[mock2]" in cfg
             assert "browsable = no\n" in cfg
-            assert "guest = ok\n" not in cfg
-            assert "guest = no\n" in cfg
+            assert "guest ok = yes\n" not in cfg
+            assert "guest ok = no\n" in cfg
             assert "read only = no\n" in cfg
             assert "create mask = 0777\n" in cfg
 
         # Check read only
-        smb.charm_config['smb-shares'] = '/mnt/unit-test,/mnt/test-unit'
+        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
         smb.charm_config['smb-read-only'] = True
         smb.update_config()
         smb.save_config()
         with open(smb.config_file, 'r') as config:
             cfg = config.read()
-            assert "[/mnt/unit-test]" in cfg
-            assert "[/mnt/test-unit]" in cfg
+            assert "[mock]" in cfg
+            assert "[mock2]" in cfg
             assert "browsable = no\n" in cfg
-            assert "guest = no\n" in cfg
+            assert "guest ok = no\n" in cfg
             assert "read only = no\n" not in cfg
             assert "read only = yes\n" in cfg
             assert "create mask = 0777\n" in cfg
 
         # Check removal of section
-        smb.charm_config['smb-shares'] = '/mnt/unit-test'
+        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test'
         smb.update_config()
         smb.save_config()
         with open(smb.config_file, 'r') as config:
             cfg = config.read()
-            assert "[/mnt/unit-test]" in cfg
-            assert "[/mnt/test-unit]" not in cfg
+            assert "[mock]" in cfg
             assert "browsable = no\n" in cfg
-            assert "guest = no\n" in cfg
+            assert "guest ok = no\n" in cfg
             assert "read only = yes\n" in cfg
             assert "create mask = 0777\n" in cfg
 
