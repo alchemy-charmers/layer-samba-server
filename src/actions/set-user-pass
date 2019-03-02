@@ -1,0 +1,17 @@
+#!/usr/local/sbin/charm-env python3
+
+from libsmb import SambaHelper
+from charmhelpers.core import hookenv
+
+samba = SambaHelper()
+name = hookenv.action_get('name')
+pass = hookenv.action_get('pass')
+err = samba.set_password(name, pass)
+
+if err:
+    hookenv.action_fail(err)
+
+msg = "Successfully set password for user {} on {}.".format(
+        user, hookenv.local_unit())
+hookenv.action_set({'outcome': 'success',
+                    'message': msg })

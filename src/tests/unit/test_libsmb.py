@@ -27,7 +27,8 @@ class TestLibsmb():
             assert "[printers]" in cfg
             assert "[print$]" in cfg
 
-    def test_update_config(self, smb, mock_check_call):
+    def test_update_config(self, smb, mock_check_call,
+                           mock_check_output, mock_service):
         shutil.copyfile("./tests/unit/smb.clean", smb.config_file)
         smb.reload_config()
         # Check default settings write w/o error
@@ -38,6 +39,12 @@ class TestLibsmb():
             assert "[printers]" not in cfg
             assert "[print$]" not in cfg
             assert "[global]" in cfg
+
+        # Test adding users
+        smb.charm_config['smb-users'] = 'ubuntu,utnubu'
+        smb.update_config()
+        assert 'ubuntu' in smb.users
+        assert 'utnubu' not in smb.users
 
         # Check with one share
         smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test'
@@ -310,4 +317,5 @@ class TestLibsmb():
             assert "vfs objects = shadow_copy2\n" in cfg
 
         # Check that service was restarted for each save
-        assert mock_check_call.call_count == 15
+        assert mock_service.called_with(['reload', 'smbd'])
+        assert mock_service.call_count == 30

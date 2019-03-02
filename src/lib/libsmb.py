@@ -1,29 +1,40 @@
-import subprocess
 import fileinput
 
-from charmhelpers.core import (
-    hookenv,
+from charmhelpers.core import hookenv
+from charmhelpers.core.host import (
+    pwgen,
+    service
 )
 from configobj import ConfigObj
+from subprocess import (
+    check_call,
+    check_output,
+    CalledProcessError
+)
 
 
 class SambaHelper():
     def __init__(self):
         self.charm_config = hookenv.config()
         self.config_file = "/etc/samba/smb.conf"
-        self.smb_config = ConfigObj(self.config_file)
+        self.smb_config = ConfigObj()
+        self.users = []
 
     def reload_config(self):
         self.smb_config = ConfigObj(
             self.config_file, raise_errors=True)
 
+    def restart_samba(self):
+        service('restart', 'smbd')
+        service('restart', 'nmbd')
+
+    def reload_samba(self):
+        service('reload', 'smbd')
+        service('reload', 'nmbd')
+
     def save_config(self):
         self.smb_config.write()
-        subprocess.check_call(
-            ['systemctl',
-             'restart',
-             'smbd.service',
-             'nmbd.service'])
+        self.reload_samba()
 
     def clean_example_config(self):
         for line in fileinput.input(self.config_file, inplace=True):
@@ -34,9 +45,68 @@ class SambaHelper():
             print(line, end='')
 
     def ensure_users(self, users):
-        print(users)
+        self.update_users()
+        # add users here, call add user helper as needed
+        userlist = users.split(',')
+        if userlist and len(userlist) > 0:
+            for user in userlist:
+                # check if user is in local password database, create
+                # if not already there
+                if user not in self.users:
+                    self.add_user(user)
+            # if so, lets add them to smbpasswd
+        # check smbpasswd list for users that are not in provided config
+        for smbuser in self.users:
+            if smbuser not in userlist:
+                # we found an orphan, set phasers to delete
+                self.remove_user(smbuser)
+
+    def update_users(self):
+        try:
+            sambatool = check_output(["samba-tool", "user", "list"])
+        except CalledProcessError as e:
+            hookenv.log("Error getting users", 'ERROR')
+            return False
+        else:
+            self.users = sambatool.split('\n')
+
+    def add_user(self, user):
+        try:
+            sambatool = check_output(["samba-tool", "user",
+                                      "getpassword", user])
+        except CalledProcessError as e:
+            hookenv.log("Error getting password for user {} in smbpasswd".format(user), 'ERROR')
+            return False
+        else:
+            return sambatool 
+    
+    def get_password(self, user):
+        try:
+            sambatool = check_output(["samba-tool", "user",
+                                      "getpassword", user])
+        except CalledProcessError as e:
+            hookenv.log("Error getting password for user {} in smbpasswd".format(user), 'ERROR')
+            return False
+        else:
+            return sambatool 
+
+    def set_password(self, user, password):
+        # if password is empty or false, auto-generate
+        if not password:
+            password = pwgen()
+        # run samba-tool
+        try:
+            check_call(["samba-tool", "user",
+                        "setpassword", user,
+                        '--newpassword={}'.format(password)])
+        except CalledProcessError as e:
+            hookenv.log("Error setting password for user {} in smbpasswd".format(user), 'ERROR')
+            return False
+        else:
+            return True
 
     def update_config(self):
+        self.reload_config()
         if self.charm_config['smb-users']:
             self.ensure_users(self.charm_config['smb-users'])
         if self.charm_config['smb-shares']:

@@ -22,7 +22,7 @@ options:
   smb-force-mask:
     type: string
     default: ""
-    description: "If set, forces the create mode for new files created by Samba. This is OR'd with smb-create-mode by Samba when new files are created to determine the mask."
+    description: "If set, forces the create mode for new files created by Samba. This is OR'd with smb-create-mask by Samba when new files are created to determine the mask."
   smb-dir-mask:
     type: string
     default: "0770"
@@ -30,11 +30,11 @@ options:
   smb-force-dir-mask:
     type: string
     default: ""
-    description: "The folder create mode which is forced on new directories by Samba. This is OR'd with smb-dir-mode by Samba when new files are created to determine the mask."
+    description: "The folder create mode which is forced on new directories by Samba. This is OR'd with smb-dir-mask by Samba when new files are created to determine the mask."
   smb-users:
     type: string
     default: ""
-    description: "A comma separated list of users to create in Samba's user database. Passwords will be automatically generated, and will need to be set to something known using the set-passwd action"
+    description: "A comma separated list of users to create in Samba's user database. Passwords will be automatically generated, and will need to be set to something known using the set-passwd action. NOTE: If you remove users, and do not redeploy the juju units, you need to use the remove-user action for each removed user."
   smb-write-list:
     type: string
     default: ""

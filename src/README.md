@@ -24,7 +24,8 @@ juju deploy cs:~pirate-charmers/samba-server
 
 ## Known Limitations and Issues
 
-N/A
+ - Passwords can not be set using charm configuration, and must be set
+   on each unit, using the `set-user-pass` action
 
 # Configuration
 
@@ -54,6 +55,16 @@ The default mask applied to created directories. Defaults to `0770`
 `smb-users`
 
 A comma separated list of users to create in Samba's user database. Passwords will be automatically generated, and will need to be set to something known using the `set-passwd` action. No users are created by default.
+
+`smb-force-group`
+`smb-force-user'
+
+For the local UNIX group and user to be used for file operations on backend storage respectively. Optional, will not be set if these settings are unset.
+
+`smb-force-dir-mask`
+`smb-force-mask`
+
+If set, forces the create mode for new directories or files created by Samba, respectively. This is OR'd with smb-dir-mask and smb-create-mask by Samba when new files are created to determine the final directory of file mask.
 
 `smb-write-list`
 

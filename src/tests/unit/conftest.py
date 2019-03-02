@@ -15,8 +15,29 @@ def mock_layers():
 @pytest.fixture
 def mock_check_call(monkeypatch):
     mock_call = mock.Mock()
-    monkeypatch.setattr('libsmb.subprocess.check_call', mock_call)
+    monkeypatch.setattr('libsmb.check_call', mock_call)
     return mock_call
+
+
+@pytest.fixture
+def mock_check_output(monkeypatch):
+
+    def mock_output(args, *, kwargs={}):
+        if args == ['samba-tool', 'user', 'list']:
+            return "ubuntu"
+        else:
+            return True
+
+    monkeypatch.setattr('libsmb.check_output', mock_output)
+    return mock_output
+
+
+@pytest.fixture
+def mock_service(monkeypatch):
+
+    mock_service = mock.Mock(return_value=True)
+    monkeypatch.setattr('libsmb.service', mock_service)
+    return mock_service
 
 
 @pytest.fixture
@@ -37,7 +58,8 @@ def mock_hookenv_config(monkeypatch):
 
 
 @pytest.fixture
-def smb(tmpdir, mock_layers, mock_hookenv_config, monkeypatch):
+def smb(tmpdir, mock_layers, mock_hookenv_config, mock_check_call,
+        mock_check_output, mock_service, monkeypatch):
     from libsmb import SambaHelper
     smb = SambaHelper()
 

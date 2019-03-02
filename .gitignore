@@ -3,4 +3,5 @@
 *__pycache__/
 *.swp
 src/report
+src/repo-info
 VERSION
