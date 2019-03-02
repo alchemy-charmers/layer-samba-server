@@ -97,4 +97,3 @@ class SambaHelper():
                 )
             if section not in sections:
                 del self.smb_config[section]
-

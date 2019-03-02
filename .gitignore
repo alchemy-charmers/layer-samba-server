@@ -2,4 +2,5 @@
 .pytest_cache/
 *__pycache__/
 *.swp
+src/report
 VERSION
