@@ -1,0 +1,6 @@
+[submodule "layers/layer-version"]
+	path = layers/layer-version
+	url = https://github.com/pirate-charmers/layer-version
+[submodule "layers/layer-service-account"]
+	path = layers/layer-service-account
+	url = https://github.com/pirate-charmers/layer-service-account

@@ -1,0 +1,5 @@
+includes: 
+  - 'layer:basic'
+  - 'layer:version'
+  - 'layer:service-account'
+repo: git@github.com:pirate-charmers/layer-samba-server.git

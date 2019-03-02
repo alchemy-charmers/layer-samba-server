@@ -1,0 +1,53 @@
+options:
+  smb-shares:
+    type: string
+    default: ""
+    description: "Comma separated list of folders to share. Optionally, flags can be set on each share by separating with commas - e.g. /mnt/storage:ro:guest:browsable:write=ubuntu to configure a storage share, that is read only, guest accessible and browsable, and only writable by the ubuntu user. "
+  smb-browsable:
+    type: boolean
+    default: True
+    description: "Shares are browsable by default"
+  smb-guest:
+    type: boolean
+    default: True
+    description: "The configured shares allow guest access by default"
+  smb-read-only:
+    type: boolean
+    default: False
+    description: "The configured shares are read only by default"
+  smb-create-mask:
+    type: string
+    default: "0660"
+    description: "The default mask applied to created files"
+  smb-force-mask:
+    type: string
+    default: ""
+    description: "If set, forces the create mode for new files created by Samba. This is OR'd with smb-create-mode by Samba when new files are created to determine the mask."
+  smb-dir-mask:
+    type: string
+    default: "0770"
+    description: "The default mask applied to created directories"
+  smb-force-dir-mask:
+    type: string
+    default: ""
+    description: "The folder create mode which is forced on new directories by Samba. This is OR'd with smb-dir-mode by Samba when new files are created to determine the mask."
+  smb-users:
+    type: string
+    default: ""
+    description: "A comma separated list of users to create in Samba's user database. Passwords will be automatically generated, and will need to be set to something known using the set-passwd action"
+  smb-write-list:
+    type: string
+    default: ""
+    description: "If configured, the provided comma separated list of users will be able to write to shares. These users need to exist in the samba user database, which can be configured with the smb-users setting"
+  smb-force-group:
+    type: string
+    default: ""
+    description: "If configured, the provided group name will be assigned as the local UNIX group name used for any connected user"
+  smb-force-user:
+    type: string
+    default: ""
+    description: "If configured, the provided user name will be assigned as the local UNIX user account used for any connected user"
+  smb-custom:
+    type: string
+    default: ""
+    description: "Raw configuration provide key=value comma seperated keys semicolon seperated shares"
