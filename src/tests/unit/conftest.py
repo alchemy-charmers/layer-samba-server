@@ -13,6 +13,46 @@ def mock_layers():
 
 
 @pytest.fixture
+def mock_action_get(monkeypatch):
+
+    def mock_action_get(name):
+        return 'blah'
+
+    monkeypatch.setattr('charmhelpers.core.hookenv.action_get',
+                        mock_action_get)
+    return mock_action_get
+
+
+@pytest.fixture
+def mock_action_set(monkeypatch):
+
+    mock_action_set = mock.Mock()
+    monkeypatch.setattr('charmhelpers.core.hookenv.action_set',
+                        mock_action_set)
+    return mock_action_set
+
+
+@pytest.fixture
+def mock_action_fail(monkeypatch):
+
+    mock_action_fail = mock.Mock()
+    monkeypatch.setattr('charmhelpers.core.hookenv.action_fail',
+                        mock_action_fail)
+    return mock_action_fail
+
+
+@pytest.fixture
+def mock_juju_unit(monkeypatch):
+
+    def mock_local_unit():
+        return 'mocked'
+
+    monkeypatch.setattr('charmhelpers.core.hookenv.local_unit',
+                        mock_local_unit)
+    return mock_local_unit
+
+
+@pytest.fixture
 def mock_check_call(monkeypatch):
     mock_call = mock.Mock()
     monkeypatch.setattr('libsmb.check_call', mock_call)

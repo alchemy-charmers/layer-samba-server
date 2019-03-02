@@ -11,6 +11,11 @@ class TestLibsmb():
         ''' See if the smb fixture works to load charm configs '''
         assert isinstance(smb.charm_config, dict)
 
+    def test_restart(self, smb, mock_service):
+        smb.restart_samba()
+        assert mock_service.called_with(['restart', 'smbd'])
+        assert mock_service.call_count == 2
+
     def test_clean_example_config(self, smb):
         shutil.copyfile("./tests/unit/smb.conf", smb.config_file)
         with open(smb.config_file, 'r') as config:
@@ -44,6 +49,12 @@ class TestLibsmb():
         smb.charm_config['smb-users'] = 'ubuntu,utnubu'
         smb.update_config()
         assert 'ubuntu' in smb.users
+        assert 'utnubu' not in smb.users
+
+        smb.charm_config['smb-users'] = 'ubuntu'
+        smb.update_config()
+        assert 'ubuntu' in smb.users
+        assert 'root' not in smb.users
         assert 'utnubu' not in smb.users
 
         # Check with one share
