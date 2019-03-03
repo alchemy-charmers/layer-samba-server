@@ -111,42 +111,43 @@ class SambaHelper():
             self.ensure_users(self.charm_config['smb-users'])
         if self.charm_config['smb-shares']:
             for entry in self.charm_config['smb-shares'].split(','):
-                share, path = entry.split(':')
-                self.smb_config[share] = {}
-                self.smb_config[share]['path'] = path
+                if ':' in entry:
+                    share, path = entry.split(':')
+                    self.smb_config[share] = {}
+                    self.smb_config[share]['path'] = path
 
-                if self.charm_config['smb-browsable']:
-                    self.smb_config[share]['browsable'] = 'yes'
-                else:
-                    self.smb_config[share]['browsable'] = 'no'
+                    if self.charm_config['smb-browsable']:
+                        self.smb_config[share]['browsable'] = 'yes'
+                    else:
+                        self.smb_config[share]['browsable'] = 'no'
 
-                if self.charm_config['smb-guest']:
-                    self.smb_config[share]['guest ok'] = 'yes'
-                else:
-                    self.smb_config[share]['guest ok'] = 'no'
+                    if self.charm_config['smb-guest']:
+                        self.smb_config[share]['guest ok'] = 'yes'
+                    else:
+                        self.smb_config[share]['guest ok'] = 'no'
 
-                if self.charm_config['smb-read-only']:
-                    self.smb_config[share]['read only'] = 'yes'
-                else:
-                    self.smb_config[share]['read only'] = 'no'
+                    if self.charm_config['smb-read-only']:
+                        self.smb_config[share]['read only'] = 'yes'
+                    else:
+                        self.smb_config[share]['read only'] = 'no'
 
-                if self.charm_config['smb-force-mask']:
-                    self.smb_config[share]['force create mode'] = self.charm_config['smb-force-mask']
+                    if self.charm_config['smb-force-mask']:
+                        self.smb_config[share]['force create mode'] = self.charm_config['smb-force-mask']
 
-                if self.charm_config['smb-force-dir-mask']:
-                    self.smb_config[share]['force directory mode'] = self.charm_config['smb-force-dir-mask']
+                    if self.charm_config['smb-force-dir-mask']:
+                        self.smb_config[share]['force directory mode'] = self.charm_config['smb-force-dir-mask']
 
-                if self.charm_config['smb-force-user']:
-                    self.smb_config[share]['force user'] = self.charm_config['smb-force-user']
+                    if self.charm_config['smb-force-user']:
+                        self.smb_config[share]['force user'] = self.charm_config['smb-force-user']
 
-                if self.charm_config['smb-force-group']:
-                    self.smb_config[share]['force group'] = self.charm_config['smb-force-group']
+                    if self.charm_config['smb-force-group']:
+                        self.smb_config[share]['force group'] = self.charm_config['smb-force-group']
 
-                if self.charm_config['smb-write-list']:
-                    self.smb_config[share]['write list'] = self.charm_config['smb-write-list']
+                    if self.charm_config['smb-write-list']:
+                        self.smb_config[share]['write list'] = self.charm_config['smb-write-list']
 
-                self.smb_config[share]['create mask'] = self.charm_config['smb-create-mask']
-                self.smb_config[share]['directory mask'] = self.charm_config['smb-dir-mask']
+                    self.smb_config[share]['create mask'] = self.charm_config['smb-create-mask']
+                    self.smb_config[share]['directory mask'] = self.charm_config['smb-dir-mask']
 
         if self.charm_config['smb-custom']:
             for num, share in enumerate(self.charm_config['smb-custom'].split(';')):
