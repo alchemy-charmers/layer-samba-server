@@ -28,6 +28,9 @@ class SambaHelper():
         service('reload', 'smbd')
         service('reload', 'nmbd')
 
+    def reload_config(self):
+        self.smb_config = ConfigObj(self.config_file)
+
     def save_config(self):
         hookenv.log("Writing config file {}".format(self.config_file), 'DEBUG')
         self.smb_config.write()
