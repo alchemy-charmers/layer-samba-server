@@ -11,6 +11,7 @@ from subprocess import (
     check_output,
     CalledProcessError
 )
+import socket
 
 
 class SambaHelper():
@@ -169,3 +170,21 @@ class SambaHelper():
                 )
             if section not in sections:
                 del self.smb_config[section]
+
+    def configure_proxy(self, proxy):
+
+        proxy_config = [
+            {
+                'mode': 'tcp',
+                'external_port': 139,
+                'internal_host': socket.getfqdn(),
+                'internal_port': 139
+            },
+            {
+                'mode': 'tcp',
+                'external_port': 445,
+                'internal_host': socket.getfqdn(),
+                'internal_port': 445
+            }
+        ]
+        proxy.configure(proxy_config)
