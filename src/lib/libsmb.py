@@ -20,10 +20,6 @@ class SambaHelper():
         self.smb_config = ConfigObj(self.config_file)
         self.users = []
 
-    def reload_config(self):
-        self.smb_config = ConfigObj(
-            self.config_file, raise_errors=True)
-
     def restart_samba(self):
         service('restart', 'smbd')
         service('restart', 'nmbd')
@@ -33,6 +29,7 @@ class SambaHelper():
         service('reload', 'nmbd')
 
     def save_config(self):
+        hookenv.log("Writing config file {}".format(self.config_file), 'DEBUG')
         self.smb_config.write()
         self.reload_samba()
 
@@ -106,10 +103,14 @@ class SambaHelper():
             return True
 
     def update_config(self):
-        self.reload_config()
+        hookenv.log("Updating configuration", 'DEBUG')
         if self.charm_config['smb-users']:
+            hookenv.log("Processing users: {}".format(
+                self.charm_config['smb-users']), 'DEBUG')
             self.ensure_users(self.charm_config['smb-users'])
         if self.charm_config['smb-shares']:
+            hookenv.log("Processing shares: {}".format(
+                self.charm_config['smb-shares']), 'DEBUG')
             for entry in self.charm_config['smb-shares'].split(','):
                 if ':' in entry:
                     share, path = entry.split(':')
