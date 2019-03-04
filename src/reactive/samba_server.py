@@ -1,5 +1,7 @@
 from charms.reactive import (
     endpoint_from_name,
+    set_flag,
+    clear_flag,
     set_state,
     when_not,
     when
@@ -47,7 +49,7 @@ def remove_proxy():
         hookenv.remote_unit()))
 
     hookenv.status_set('active', 'Samba is ready')
-    hookenv.clear_flag('reverseproxy.configured')
+    clear_flag('reverseproxy.configured')
 
 
 @when('reverseproxy.ready')
@@ -63,4 +65,4 @@ def configure_proxy():
     smb.configure_proxy(interface)
 
     hookenv.status_set('active', 'Samba is ready')
-    hookenv.set_flag('reverseproxy.configured')
+    set_flag('reverseproxy.configured')
