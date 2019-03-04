@@ -26,10 +26,10 @@ def install_samba_server():
     set_state('samba-server.installed')
 
 
-@when('config.changed', 'samba-server.installed')
-def update_exports():
+@when('config.changed', 'samba-server.installed', 'layer-service-account.configured')
+def update_config():
     hookenv.status_set('maintenance', 'Configuring Samba')
     smb.update_config()
-    # smb.save_config()
+    smb.save_config()
     hookenv.log("Config file written", hookenv.INFO)
     hookenv.status_set('active', 'Samba is ready')
