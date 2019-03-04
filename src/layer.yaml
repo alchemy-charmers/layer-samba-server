@@ -7,6 +7,3 @@ options:
   version:
     file_name: "repo-info"
 repo: git@github.com:pirate-charmers/layer-samba-server.git
-requires:
-  reverseproxy:
-    interface: reverseproxy

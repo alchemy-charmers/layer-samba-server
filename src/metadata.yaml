@@ -7,5 +7,8 @@ series:
   - xenial
   - bionic
 tags:
-  - storage 
+  - storage
 subordinate: false
+requires:
+  reverseproxy:
+    interface: reverseproxy
