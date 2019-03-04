@@ -17,7 +17,7 @@ class SambaHelper():
     def __init__(self):
         self.charm_config = hookenv.config()
         self.config_file = "/etc/samba/smb.conf"
-        self.smb_config = ConfigObj()
+        self.smb_config = ConfigObj(self.config_file)
         self.users = []
 
     def reload_config(self):
