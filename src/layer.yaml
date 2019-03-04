@@ -2,8 +2,11 @@ includes:
   - layer:basic
   - layer:service-account
   - layer:version
-  - interface: reverseproxy
+  - interface:reverseproxy
 options:
   version:
     file_name: "repo-info"
 repo: git@github.com:pirate-charmers/layer-samba-server.git
+requires:
+  reverseproxy:
+    interface: reverseproxy
