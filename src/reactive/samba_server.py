@@ -32,6 +32,8 @@ def update_config():
     hookenv.status_set('maintenance', 'Configuring Samba')
     smb.update_config()
     smb.save_config()
+    hookenv.open_port('445', protocol='TCP')
+    hookenv.open_port('139', protocol='TCP')
     hookenv.log("Config file written", hookenv.INFO)
     hookenv.status_set('active', 'Samba is ready')
 
