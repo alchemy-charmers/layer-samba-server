@@ -108,13 +108,20 @@ class SambaHelper():
 
     def update_config(self):
         hookenv.log("Updating configuration", 'DEBUG')
+
         if self.charm_config['smb-users']:
             hookenv.log("Processing users: {}".format(
                 self.charm_config['smb-users']), 'DEBUG')
             self.ensure_users(self.charm_config['smb-users'])
-        if self.charm_config['smb-time-machine'] and self.samba_version:
+
+        if self.charm_config['smb-time-machine']: 
             hookenv.log("Adding time machine share: {}".format(
                 self.charm_config['smb-time-machine']), 'DEBUG')
+
+            self.smb_config['global']['vfs objects'] = 'catia fruit streams_xattr'
+            self.smb_config['global']['fruit:veto_appledouble'] = 'no'
+            self.smb_config['global']['fruit:encoding'] = 'native'
+            self.smb_config['global']['fruit:metadata'] = 'stream'
 
             self.smb_config['Time Machine'] = {}
             self.smb_config['Time Machine']['path'] = self.charm_config['smb-time-machine']
@@ -152,6 +159,17 @@ class SambaHelper():
 
             self.smb_config['Time Machine']['create mask'] = self.charm_config['smb-create-mask']
             self.smb_config['Time Machine']['directory mask'] = self.charm_config['smb-dir-mask']
+
+        else:
+
+            if 'vfs objects' in self.smb_config['global']:
+                del self.smb_config['global']['vfs objects']
+            if 'fruit:veto_appledouble' in self.smb_config['global']:
+                del self.smb_config['global']['fruit:veto_appledouble']
+            if 'fruit:encoding' in self.smb_config['global']:
+                del self.smb_config['global']['fruit:encoding']
+            if 'fruit:metadata' in self.smb_config['global']:
+                del self.smb_config['global']['fruit:metadata']
 
         if self.charm_config['smb-shares']:
             hookenv.log("Processing shares: {}".format(
@@ -202,16 +220,22 @@ class SambaHelper():
                 for setting in share.split(','):
                     key, value = setting.split('=')
                     self.smb_config[share_name][key] = value
+
         for section in self.smb_config.keys():
             sections = ['global']
             if self.charm_config['smb-shares']:
                 for entry in self.charm_config['smb-shares'].split(','):
                     share, path = entry.split(':')
                     sections.append(share)
+
+            if self.charm_config['smb-time-machine']:
+                sections.extend(['Time Machine'])
+
             if self.charm_config['smb-custom']:
                 sections.extend(
                     ['custom-{}'.format(i) for i, dummy in enumerate(self.charm_config['smb-custom'].split(';'))]
                 )
+
             if section not in sections:
                 del self.smb_config[section]
 

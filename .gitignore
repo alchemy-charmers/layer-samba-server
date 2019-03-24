@@ -5,4 +5,5 @@
 .coverage
 src/report
 src/repo-info
+repo-info
 VERSION

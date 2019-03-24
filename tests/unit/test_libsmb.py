@@ -269,6 +269,59 @@ class TestLibsmb():
         with open(smb.config_file, 'r') as config:
             cfg = config.read()
             assert "[mock]" in cfg
+            assert "fruit:time machine = yes\n" not in cfg
+            assert "fruit:veto_appledouble = no\n" not in cfg
+            assert "fruit:encoding = native\n" not in cfg
+            assert "fruit:metadata = stream\n" not in cfg
+            assert "vfs objects = catia fruit streams_xattr\n" not in cfg
+            assert "browsable = no\n" in cfg
+            assert "guest ok = no\n" in cfg
+            assert "read only = yes\n" in cfg
+            assert "create mask = 0660\n" in cfg
+            assert "directory mask = 0770\n" in cfg
+            assert "force create mode = 0666\n" in cfg
+            assert "force directory mode = 2770\n" in cfg
+            assert "force user = ubuntu\n" in cfg
+            assert "force group = ubuntu\n" in cfg
+            assert 'write list = "ubuntu,utnubu"\n' in cfg
+
+        # Check time machine
+        smb.charm_config['smb-time-machine'] = '/time-machine'
+        smb.update_config()
+        smb.save_config()
+        with open(smb.config_file, 'r') as config:
+            cfg = config.read()
+            assert "[mock]" in cfg
+            assert "[Time Machine]" in cfg
+            assert "fruit:time machine = yes\n" in cfg
+            assert "fruit:veto_appledouble = no\n" in cfg
+            assert "fruit:encoding = native\n" in cfg
+            assert "fruit:metadata = stream\n" in cfg
+            assert "vfs objects = catia fruit streams_xattr\n" in cfg
+            assert "browsable = no\n" in cfg
+            assert "guest ok = no\n" in cfg
+            assert "read only = yes\n" in cfg
+            assert "create mask = 0660\n" in cfg
+            assert "directory mask = 0770\n" in cfg
+            assert "force create mode = 0666\n" in cfg
+            assert "force directory mode = 2770\n" in cfg
+            assert "force user = ubuntu\n" in cfg
+            assert "force group = ubuntu\n" in cfg
+            assert 'write list = "ubuntu,utnubu"\n' in cfg
+
+        # Check removal of time machine
+        smb.charm_config['smb-time-machine'] = ''
+        smb.update_config()
+        smb.save_config()
+        with open(smb.config_file, 'r') as config:
+            cfg = config.read()
+            assert "[mock]" in cfg
+            assert "[Time Machine]" not in cfg
+            assert "fruit:time machine = yes\n" not in cfg
+            assert "fruit:veto_appledouble = no\n" not in cfg
+            assert "fruit:encoding = native\n" not in cfg
+            assert "fruit:metadata = stream\n" not in cfg
+            assert "vfs objects = catia fruit streams_xattr\n" not in cfg
             assert "browsable = no\n" in cfg
             assert "guest ok = no\n" in cfg
             assert "read only = yes\n" in cfg
@@ -329,4 +382,4 @@ class TestLibsmb():
 
         # Check that service was restarted for each save
         assert mock_service.called_with(['reload', 'smbd'])
-        assert mock_service.call_count == 30
+        assert mock_service.call_count == 34
