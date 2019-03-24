@@ -66,7 +66,7 @@ class SambaHelper():
         try:
             sambatool = check_output(["samba-tool", "user", "list"])
         except CalledProcessError as e:
-            hookenv.log("Error getting users", 'ERROR')
+            hookenv.log("Error getting users: {}".format(e.message), 'ERROR')
             return False
         else:
             self.users = sambatool.split('\n')
@@ -76,20 +76,20 @@ class SambaHelper():
             sambatool = check_output(["samba-tool", "user",
                                       "getpassword", user])
         except CalledProcessError as e:
-            hookenv.log("Error getting password for user {} in smbpasswd".format(user), 'ERROR')
+            hookenv.log("Error getting password for user {} in smbpasswd: {}".format(user, e.message), 'ERROR')
             return False
         else:
-            return sambatool 
-    
+            return sambatool
+
     def get_password(self, user):
         try:
             sambatool = check_output(["samba-tool", "user",
                                       "getpassword", user])
         except CalledProcessError as e:
-            hookenv.log("Error getting password for user {} in smbpasswd".format(user), 'ERROR')
+            hookenv.log("Error getting password for user {} in smbpasswd: {}".format(user, e.message), 'ERROR')
             return False
         else:
-            return sambatool 
+            return sambatool
 
     def set_password(self, user, password):
         # if password is empty or false, auto-generate
@@ -101,7 +101,7 @@ class SambaHelper():
                         "setpassword", user,
                         '--newpassword={}'.format(password)])
         except CalledProcessError as e:
-            hookenv.log("Error setting password for user {} in smbpasswd".format(user), 'ERROR')
+            hookenv.log("Error setting password for user {} in smbpasswd: {}".format(user, e.message), 'ERROR')
             return False
         else:
             return True
@@ -112,6 +112,47 @@ class SambaHelper():
             hookenv.log("Processing users: {}".format(
                 self.charm_config['smb-users']), 'DEBUG')
             self.ensure_users(self.charm_config['smb-users'])
+        if self.charm_config['smb-time-machine'] and self.samba_version:
+            hookenv.log("Adding time machine share: {}".format(
+                self.charm_config['smb-time-machine']), 'DEBUG')
+
+            self.smb_config['Time Machine'] = {}
+            self.smb_config['Time Machine']['path'] = self.charm_config['smb-time-machine']
+            self.smb_config['Time Machine']['fruit:time machine'] = 'yes'
+
+            if self.charm_config['smb-browsable']:
+                self.smb_config['Time Machine']['browsable'] = 'yes'
+            else:
+                self.smb_config['Time Machine']['browsable'] = 'no'
+
+            if self.charm_config['smb-guest']:
+                self.smb_config['Time Machine']['guest ok'] = 'yes'
+            else:
+                self.smb_config['Time Machine']['guest ok'] = 'no'
+
+            if self.charm_config['smb-read-only']:
+                self.smb_config['Time Machine']['read only'] = 'yes'
+            else:
+                self.smb_config['Time Machine']['read only'] = 'no'
+
+            if self.charm_config['smb-force-mask']:
+                self.smb_config['Time Machine']['force create mode'] = self.charm_config['smb-force-mask']
+
+            if self.charm_config['smb-force-dir-mask']:
+                self.smb_config['Time Machine']['force directory mode'] = self.charm_config['smb-force-dir-mask']
+
+            if self.charm_config['smb-force-user']:
+                self.smb_config['Time Machine']['force user'] = self.charm_config['smb-force-user']
+
+            if self.charm_config['smb-force-group']:
+                self.smb_config['Time Machine']['force group'] = self.charm_config['smb-force-group']
+
+            if self.charm_config['smb-write-list']:
+                self.smb_config['Time Machine']['write list'] = self.charm_config['smb-write-list']
+
+            self.smb_config['Time Machine']['create mask'] = self.charm_config['smb-create-mask']
+            self.smb_config['Time Machine']['directory mask'] = self.charm_config['smb-dir-mask']
+
         if self.charm_config['smb-shares']:
             hookenv.log("Processing shares: {}".format(
                 self.charm_config['smb-shares']), 'DEBUG')

@@ -51,3 +51,7 @@ options:
     type: string
     default: ""
     description: "Raw configuration provide key=value comma seperated keys semicolon seperated shares"
+  smb-time-machine:
+    type: string
+    default: "" 
+    description: "On Ubuntu Cosmic Cuttlefish (Samba 4.8) and newer, enables a share at the provided path which can be used to back up Mac OSX machines via Time Machine"
