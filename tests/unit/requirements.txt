@@ -1,5 +1,10 @@
 charmhelpers
 charms.reactive
+flake8
+juju
 mock
 pytest
+pytest-asyncio
 pytest-cov
+requests
+configobj
