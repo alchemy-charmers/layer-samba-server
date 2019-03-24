@@ -1,6 +1,9 @@
-[submodule "layers/layer-version"]
-	path = layers/layer-version
-	url = https://github.com/pirate-charmers/layer-version
+[submodule "interfaces/interface-reverseproxy"]
+	path = interfaces/interface-reverseproxy
+	url = https://github.com/pirate-charmers/interface-reverseproxy.git
 [submodule "layers/layer-service-account"]
 	path = layers/layer-service-account
-	url = https://github.com/pirate-charmers/layer-service-account
+	url = https://github.com/pirate-charmers/layer-service-account.git
+[submodule "layers/layer-version"]
+	path = layers/layer-version
+	url = https://github.com/pirate-charmers/layer-version.git
