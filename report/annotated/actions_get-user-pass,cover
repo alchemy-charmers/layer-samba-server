@@ -1,0 +1,17 @@
+  #!/usr/local/sbin/charm-env python3
+  
+> from libsmb import SambaHelper
+> from charmhelpers.core import hookenv
+  
+> samba = SambaHelper()
+> name = hookenv.action_get('name')
+> password = samba.get_password(name)
+  
+> if not password:
+!     hookenv.action_fail("Failed to retrieve password for user {}".format(name))
+  
+> msg = "Successfully retrieved password for user {} on {}.".format(
+>         name, hookenv.local_unit())
+> hookenv.action_set({'outcome': 'success',
+>                     'message': msg,
+> 		    'password': password})
