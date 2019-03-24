@@ -1,0 +1,20 @@
+set-user-pass:
+  description: "Set the Samba password for a user in the smbpasswd file"
+  properties:
+    name:
+      description: "The username to set the password for in the smbpasswd file"
+      type: string
+    pass:
+      description: "The desired password for this user. Will be hashed and placed in the smbpasswd file"
+      type: string
+  required:
+    - name
+    - pass
+get-user-pass:
+  description: "Get the Samba password for a user in the smbpasswd file"
+  properties:
+    name:
+      description: "The username to get the password for in the smbpasswd file"
+      type: string
+  required:
+    - name

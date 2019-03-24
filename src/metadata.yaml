@@ -1,0 +1,11 @@
+name: samba-server
+summary: Samba file server
+maintainer: Chris Sanders <sanders.chris@gmail.com>
+description: |
+  Installs the Samba CIFS server, and configures local folders to be available as shares to users.
+series:
+  - xenial
+  - bionic
+tags:
+  - storage 
+subordinate: false
