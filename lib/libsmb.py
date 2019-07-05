@@ -78,8 +78,8 @@ class SambaHelper():
             hookenv.log("Error getting password for user {} in smbpasswd".format(user), 'ERROR')
             return False
         else:
-            return sambatool 
-    
+            return sambatool
+
     def get_password(self, user):
         try:
             sambatool = check_output(["samba-tool", "user",
@@ -88,7 +88,7 @@ class SambaHelper():
             hookenv.log("Error getting password for user {} in smbpasswd".format(user), 'ERROR')
             return False
         else:
-            return sambatool 
+            return sambatool
 
     def set_password(self, user, password):
         # if password is empty or false, auto-generate
@@ -164,7 +164,7 @@ class SambaHelper():
             sections = ['global']
             if self.charm_config['smb-shares']:
                 for entry in self.charm_config['smb-shares'].split(','):
-                    share, path = entry.split(':')
+                    share = entry.split(':')[0]
                     sections.append(share)
             if self.charm_config['smb-custom']:
                 sections.extend(
