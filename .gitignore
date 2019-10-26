@@ -1,8 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Log files
+*.log
+
 .tox/
-.pytest_cache/
-*__pycache__/
-*.swp
 .coverage
-src/report
-src/repo-info
-VERSION
+
+# vi
+.*.swp
+
+# pycharm
+.idea/
+
+# version data
+repo-info
+
+# reports
+report/*
+
+# State database
+.unit-state.db

@@ -2,66 +2,64 @@
 import shutil
 
 
-class TestLibsmb():
-
+class TestLibsmb:
     def test_pytest(self):
         assert True
 
     def test_smb(self, smb):
-        ''' See if the smb fixture works to load charm configs '''
+        """ See if the smb fixture works to load charm configs """
         assert isinstance(smb.charm_config, dict)
 
     def test_restart(self, smb, mock_service):
         smb.restart_samba()
-        assert mock_service.called_with(['restart', 'smbd'])
+        assert mock_service.called_with(["restart", "smbd"])
         assert mock_service.call_count == 2
 
     def test_clean_example_config(self, smb):
         shutil.copyfile("./tests/unit/smb.conf", smb.config_file)
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "# Sample configuration file" in cfg
             assert ";[profiles]" in cfg
             assert "[printers]" in cfg
             assert "[print$]" in cfg
         smb.clean_example_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "# Sample configuration file" not in cfg
             assert ";[profiles]" not in cfg
             assert "[printers]" in cfg
             assert "[print$]" in cfg
 
-    def test_update_config(self, smb, mock_check_call,
-                           mock_check_output, mock_service):
+    def test_update_config(self, smb, mock_check_call, mock_check_output, mock_service):
         shutil.copyfile("./tests/unit/smb.clean", smb.config_file)
         smb.reload_config()
         # Check default settings write w/o error
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[printers]" not in cfg
             assert "[print$]" not in cfg
             assert "[global]" in cfg
 
         # Test adding users
-        smb.charm_config['smb-users'] = 'ubuntu,utnubu'
+        smb.charm_config["smb-users"] = "ubuntu,utnubu"
         smb.update_config()
-        assert 'ubuntu' in smb.users
-        assert 'utnubu' not in smb.users
+        assert "ubuntu" in smb.users
+        assert "utnubu" not in smb.users
 
-        smb.charm_config['smb-users'] = 'ubuntu'
+        smb.charm_config["smb-users"] = "ubuntu"
         smb.update_config()
-        assert 'ubuntu' in smb.users
-        assert 'root' not in smb.users
-        assert 'utnubu' not in smb.users
+        assert "ubuntu" in smb.users
+        assert "root" not in smb.users
+        assert "utnubu" not in smb.users
 
         # Check with one share
-        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test'
+        smb.charm_config["smb-shares"] = "mock:/mnt/unit-test"
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[mock]" in cfg
             assert "browsable = yes\n" in cfg
@@ -76,10 +74,10 @@ class TestLibsmb():
             assert "write list = " not in cfg
 
         # Check with multiple share
-        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
+        smb.charm_config["smb-shares"] = "mock:/mnt/unit-test,mock2:/mnt/test-unit"
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[mock]" in cfg
             assert "[mock2]" in cfg
@@ -95,11 +93,11 @@ class TestLibsmb():
             assert "write list = " not in cfg
 
         # Check browsable
-        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
-        smb.charm_config['smb-browsable'] = False
+        smb.charm_config["smb-shares"] = "mock:/mnt/unit-test,mock2:/mnt/test-unit"
+        smb.charm_config["smb-browsable"] = False
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[mock]" in cfg
             assert "[mock2]" in cfg
@@ -116,11 +114,11 @@ class TestLibsmb():
             assert "write list = " not in cfg
 
         # Check guest
-        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
-        smb.charm_config['smb-guest'] = False
+        smb.charm_config["smb-shares"] = "mock:/mnt/unit-test,mock2:/mnt/test-unit"
+        smb.charm_config["smb-guest"] = False
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[mock]" in cfg
             assert "[mock2]" in cfg
@@ -137,11 +135,11 @@ class TestLibsmb():
             assert "write list = " not in cfg
 
         # Check read only
-        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
-        smb.charm_config['smb-read-only'] = True
+        smb.charm_config["smb-shares"] = "mock:/mnt/unit-test,mock2:/mnt/test-unit"
+        smb.charm_config["smb-read-only"] = True
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[mock]" in cfg
             assert "[mock2]" in cfg
@@ -158,11 +156,11 @@ class TestLibsmb():
             assert "write list = " not in cfg
 
         # Check force user
-        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
-        smb.charm_config['smb-force-user'] = 'ubuntu'
+        smb.charm_config["smb-shares"] = "mock:/mnt/unit-test,mock2:/mnt/test-unit"
+        smb.charm_config["smb-force-user"] = "ubuntu"
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[mock]" in cfg
             assert "[mock2]" in cfg
@@ -179,11 +177,11 @@ class TestLibsmb():
             assert "write list = " not in cfg
 
         # Check force group
-        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
-        smb.charm_config['smb-force-group'] = 'ubuntu'
+        smb.charm_config["smb-shares"] = "mock:/mnt/unit-test,mock2:/mnt/test-unit"
+        smb.charm_config["smb-force-group"] = "ubuntu"
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[mock]" in cfg
             assert "[mock2]" in cfg
@@ -200,11 +198,11 @@ class TestLibsmb():
             assert "write list = " not in cfg
 
         # Check force create mode
-        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
-        smb.charm_config['smb-force-mask'] = '0666'
+        smb.charm_config["smb-shares"] = "mock:/mnt/unit-test,mock2:/mnt/test-unit"
+        smb.charm_config["smb-force-mask"] = "0666"
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[mock]" in cfg
             assert "[mock2]" in cfg
@@ -221,11 +219,11 @@ class TestLibsmb():
             assert "write list = " not in cfg
 
         # Check force directory mode
-        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
-        smb.charm_config['smb-force-dir-mask'] = '2770'
+        smb.charm_config["smb-shares"] = "mock:/mnt/unit-test,mock2:/mnt/test-unit"
+        smb.charm_config["smb-force-dir-mask"] = "2770"
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[mock]" in cfg
             assert "[mock2]" in cfg
@@ -242,11 +240,11 @@ class TestLibsmb():
             assert "write list = " not in cfg
 
         # Check write list
-        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test,mock2:/mnt/test-unit'
-        smb.charm_config['smb-write-list'] = 'ubuntu,utnubu'
+        smb.charm_config["smb-shares"] = "mock:/mnt/unit-test,mock2:/mnt/test-unit"
+        smb.charm_config["smb-write-list"] = "ubuntu,utnubu"
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[mock]" in cfg
             assert "[mock2]" in cfg
@@ -263,10 +261,10 @@ class TestLibsmb():
             assert 'write list = "ubuntu,utnubu"\n' in cfg
 
         # Check removal of section
-        smb.charm_config['smb-shares'] = 'mock:/mnt/unit-test'
+        smb.charm_config["smb-shares"] = "mock:/mnt/unit-test"
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[mock]" in cfg
             assert "browsable = no\n" in cfg
@@ -281,11 +279,12 @@ class TestLibsmb():
             assert 'write list = "ubuntu,utnubu"\n' in cfg
 
         # Check custom config
-        smb.charm_config['smb-custom'] = \
-            'path=/mnt/custom,shadow:format=zfsnap_%S_%Y-%m-%d_%H.%M.00--10y,vfs objects=shadow_copy'
+        smb.charm_config[
+            "smb-custom"
+        ] = "path=/mnt/custom,shadow:format=zfsnap_%S_%Y-%m-%d_%H.%M.00--10y,vfs objects=shadow_copy"
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[custom-0]" in cfg
             assert "path = /mnt/custom\n" in cfg
@@ -293,14 +292,16 @@ class TestLibsmb():
             assert "vfs objects = shadow_copy\n" in cfg
 
         # Check multiple custom configs
-        smb.charm_config['smb-custom'] = ('path=/mnt/custom,'
-                                          'shadow:format=zfsnap_%S_%Y-%m-%d_%H.%M.00--10y,'
-                                          'vfs objects=shadow_copy;'
-                                          'path=/mnt/second-custom,shadow:format=zfsnap2_%S_%Y-%m-%d_%H.%M.00--10y,'
-                                          'vfs objects=shadow_copy2')
+        smb.charm_config["smb-custom"] = (
+            "path=/mnt/custom,"
+            "shadow:format=zfsnap_%S_%Y-%m-%d_%H.%M.00--10y,"
+            "vfs objects=shadow_copy;"
+            "path=/mnt/second-custom,shadow:format=zfsnap2_%S_%Y-%m-%d_%H.%M.00--10y,"
+            "vfs objects=shadow_copy2"
+        )
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[custom-0]" in cfg
             assert "path = /mnt/custom\n" in cfg
@@ -312,11 +313,13 @@ class TestLibsmb():
             assert "vfs objects = shadow_copy2\n" in cfg
 
         # Remove custom section
-        smb.charm_config['smb-custom'] = ('path=/mnt/second-custom,shadow:format=zfsnap2_%S_%Y-%m-%d_%H.%M.00--10y,'
-                                          'vfs objects=shadow_copy2')
+        smb.charm_config["smb-custom"] = (
+            "path=/mnt/second-custom,shadow:format=zfsnap2_%S_%Y-%m-%d_%H.%M.00--10y,"
+            "vfs objects=shadow_copy2"
+        )
         smb.update_config()
         smb.save_config()
-        with open(smb.config_file, 'r') as config:
+        with open(smb.config_file, "r") as config:
             cfg = config.read()
             assert "[custom-0]" in cfg
             assert "path = /mnt/custom" not in cfg
@@ -328,5 +331,5 @@ class TestLibsmb():
             assert "vfs objects = shadow_copy2\n" in cfg
 
         # Check that service was restarted for each save
-        assert mock_service.called_with(['reload', 'smbd'])
+        assert mock_service.called_with(["reload", "smbd"])
         assert mock_service.call_count == 30
