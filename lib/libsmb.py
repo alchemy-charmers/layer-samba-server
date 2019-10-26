@@ -57,7 +57,7 @@ class SambaHelper:
     def update_users(self):
         try:
             sambatool = check_output(["samba-tool", "user", "list"])
-        except CalledProcessError as e:
+        except CalledProcessError:
             hookenv.log("Error getting users", "ERROR")
             return False
         else:
@@ -66,7 +66,7 @@ class SambaHelper:
     def add_user(self, user):
         try:
             sambatool = check_output(["samba-tool", "user", "getpassword", user])
-        except CalledProcessError as e:
+        except CalledProcessError:
             hookenv.log(
                 "Error getting password for user {} in smbpasswd".format(user), "ERROR"
             )
@@ -77,7 +77,7 @@ class SambaHelper:
     def get_password(self, user):
         try:
             sambatool = check_output(["samba-tool", "user", "getpassword", user])
-        except CalledProcessError as e:
+        except CalledProcessError:
             hookenv.log(
                 "Error getting password for user {} in smbpasswd".format(user), "ERROR"
             )
@@ -100,7 +100,7 @@ class SambaHelper:
                     "--newpassword={}".format(password),
                 ]
             )
-        except CalledProcessError as e:
+        except CalledProcessError:
             hookenv.log(
                 "Error setting password for user {} in smbpasswd".format(user), "ERROR"
             )
