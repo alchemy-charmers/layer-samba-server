@@ -14,7 +14,7 @@ series = [
 ]
 sources = [
     ("local", "{}/builds/samba-server".format(juju_repository)),
-    ('jujucharms', 'cs:~pirate-charmers/samba-server'),
+    ("jujucharms", "cs:~pirate-charmers/samba-server"),
 ]
 
 
@@ -61,21 +61,24 @@ async def test_samba_deploy(model, series, source, request):
 
 @pytest.mark.deploy
 @pytest.mark.timeout(420)
-async def test_charm_upgrade(model, app):
+async def test_charm_upgrade(model, app, request):
     if app.name.endswith("local"):
-        pytest.skip("No need to upgrade the local deploy")
+        pytest.skip()  # No need to upgrade local charms
     unit = app.units[0]
     await model.block_until(lambda: unit.agent_status == "idle")
-    subprocess.check_call(
-        [
-            "juju",
-            "upgrade-charm",
-            "--switch={}".format(sources[0][1]),
-            "-m",
-            model.info.name,
-            app.name,
-        ]
-    )
+    cmd = [
+        "juju",
+        "upgrade-charm",
+        "--switch={}".format(sources[0][1]),
+        "-m",
+        model.info.name,
+        app.name,
+    ]
+    if request.node.get_closest_marker("xfail"):
+        # If series is 'xfail' force install to allow testing against versions not in
+        # metadata.yaml
+        cmd.append("--force")
+    subprocess.check_call(cmd)
     await model.block_until(lambda: unit.agent_status == "executing")
 
 
