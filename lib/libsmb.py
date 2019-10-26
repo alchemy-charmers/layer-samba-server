@@ -1,5 +1,5 @@
-from subprocess import CalledProcessError, check_call, check_output
 import fileinput
+from subprocess import CalledProcessError, check_call, check_output
 
 from charmhelpers.core import hookenv
 from charmhelpers.core.host import pwgen, service

@@ -1,8 +1,9 @@
 #!/usr/bin/python3
-import pytest
-import mock
-
 import sys
+
+import mock
+import pytest
+
 # import shutil
 
 
