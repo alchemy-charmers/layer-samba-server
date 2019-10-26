@@ -9,7 +9,7 @@ juju_repository = os.getenv("JUJU_REPOSITORY", ".").rstrip("/")
 series = [
     "xenial",
     "bionic",
-    pytest.param("disco", marks=pytest.mark.xfail(reason="canary")),
+    # pytest.param("disco", marks=pytest.mark.xfail(reason="canary")),
 ]
 sources = [
     ("local", "{}/builds/samba-server".format(juju_repository)),
