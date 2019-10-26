@@ -51,3 +51,9 @@ options:
     type: string
     default: ""
     description: "Raw configuration provide key=value comma seperated keys semicolon seperated shares"
+  smb-strict-locking:
+    type: string
+    default: "no"
+    description: "Set strict locking see smb.conf for details.
+           Well-behaved clients always ask for lock checks when it is important. So in the vast
+           majority of cases, strict locking = Auto or strict locking = no is acceptable."

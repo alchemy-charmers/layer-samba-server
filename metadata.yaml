@@ -6,7 +6,6 @@ description: |
 series:
   - xenial
   - bionic
-  - cosmic
 tags:
   - storage 
 subordinate: false

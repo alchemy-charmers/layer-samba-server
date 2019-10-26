@@ -179,6 +179,12 @@ class SambaHelper:
                 for setting in share.split(","):
                     key, value = setting.split("=")
                     self.smb_config[share_name][key] = value
+        locking_config = "no"
+        if self.charm_config["smb-strict-locking"].lower() == "yes":
+            locking_config = "yes"
+        elif self.charm_config["smb-strict-locking"].lower() == "auto":
+            locking_config = "Auto"
+        self.smb_config["global"]["strict locking"] = locking_config
         for section in self.smb_config.keys():
             sections = ["global"]
             if self.charm_config["smb-shares"]:
