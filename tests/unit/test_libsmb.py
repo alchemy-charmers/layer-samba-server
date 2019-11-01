@@ -43,6 +43,36 @@ class TestLibsmb:
             assert "[print$]" not in cfg
             assert "[global]" in cfg
 
+        # Test strict locking default
+        assert "strict locking" in smb.smb_config['global']
+        with open(smb.config_file, "r") as config:
+            cfg = config.read()
+            assert "strict locking = no" in cfg
+
+        # Test strict locking auto
+        smb.charm_config["smb-strict-locking"] = "Auto"
+        smb.update_config()
+        smb.save_config()
+        with open(smb.config_file, "r") as config:
+            cfg = config.read()
+            assert "strict locking = Auto" in cfg
+
+        # Test strict locking yes
+        smb.charm_config["smb-strict-locking"] = "Yes"
+        smb.update_config()
+        smb.save_config()
+        with open(smb.config_file, "r") as config:
+            cfg = config.read()
+            assert "strict locking = yes" in cfg
+
+        # Test strict locking invalid
+        smb.charm_config["smb-strict-locking"] = "i-dont-know"
+        smb.update_config()
+        smb.save_config()
+        with open(smb.config_file, "r") as config:
+            cfg = config.read()
+            assert "strict locking = no" in cfg
+
         # Test adding users
         smb.charm_config["smb-users"] = "ubuntu,utnubu"
         smb.update_config()
@@ -332,4 +362,4 @@ class TestLibsmb:
 
         # Check that service was restarted for each save
         assert mock_service.called_with(["reload", "smbd"])
-        assert mock_service.call_count == 30
+        assert mock_service.call_count == 36
